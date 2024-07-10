@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, Tray, Menu} from 'electron';
 import path from 'path';
 import os from 'os';
 import * as pty from 'node-pty';
@@ -8,6 +8,7 @@ const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
 let shellProcess = undefined as undefined | pty.IPty;
+let tray = null;
 
 function createWindow() {
   /**
@@ -42,7 +43,21 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+
+  tray = new Tray(path.resolve(__dirname, 'icons/icon.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    {label: 'Item1', type: 'radio'},
+    {label: 'Item2', type: 'radio'},
+    {label: 'Item3', type: 'radio', checked: true},
+    {label: 'Item4', type: 'radio'}
+  ])
+  tray.setToolTip('This is my application.')
+  tray.setContextMenu(contextMenu)
+  tray.addListener('double-click', () => {
+    createWindow()
+  });
+});
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -65,26 +80,12 @@ ipcMain.on('start-shell', () => {
     rows: 30,
   });
   shellProcess.onData(recv => mainWindow?.webContents.send('stdout', recv));
-  /*
-  if(!shellProcess.stdout || !shellProcess.stderr)
-    return
-  // Handle the data event for standard output
-  shellProcess.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-    mainWindow?.webContents.send('stdout', data.toString());
-  });
-
-// Handle the data event for standard error
-  shellProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-    mainWindow?.webContents.send('stdout', data.toString());
-  });*/
 });
 
 // Handle an IPC event from renderer
 ipcMain.on('message-from-renderer', (event, args) => {
   console.log('Received from renderer:', args);
-  if(!shellProcess) {
+  if (!shellProcess) {
     console.warn('shell process is undefined')
     return
   }

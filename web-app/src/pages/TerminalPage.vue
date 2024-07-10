@@ -1,19 +1,24 @@
 <template>
-  <q-page class="">
-    <div id="terminal" style="height: 100%"></div>
+  <q-page class="fill-height">
+    <q-page-container style="height: 100vh">
+      <div id="terminal" style="height: 100vh"></div>
+    </q-page-container>
+
   </q-page>
 </template>
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
 import * as xterm from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
 
 defineOptions({
   name: 'TerminalPage'
 });
 
 const term = new xterm.Terminal();
-// const line = ref('')
+const fitAddon = new FitAddon();
+term.loadAddon(fitAddon);
 
 onMounted(() => {
   console.log('mounting terminal')
@@ -31,6 +36,7 @@ onMounted(() => {
   const element = document.getElementById('terminal')
   if (element) {
     term.open(element);
+    fitAddon.fit();
     term.onBinary((key) => {
       console.log('binary ', key)
     })
