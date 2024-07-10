@@ -1,9 +1,9 @@
 {
-  "name": "terminalcek-app",
+  "name": "terminalcek",
   "version": "0.0.1",
-  "description": "Web Terminal",
+  "description": "Terminalcek web app",
   "productName": "Terminalcek",
-  "author": "Nejc Medved",
+  "author": "Nejc Medved <medo.nejc@gmail.com>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
@@ -15,6 +15,7 @@
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "node-pty": "^1.0.0",
     "pinia": "^2.0.11",
     "quasar": "^2.16.0",
     "vue": "^3.4.18",
@@ -23,6 +24,7 @@
     "xterm": "^5.3.0"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.6.0",
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@quasar/app-vite": "^1.9.0",
     "@types/node": "^12.20.21",

@@ -1,6 +1,6 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <div id="terminal"></div>
+  <q-page class="">
+    <div id="terminal" style="height: 100%"></div>
   </q-page>
 </template>
 
@@ -12,13 +12,36 @@ defineOptions({
   name: 'TerminalPage'
 });
 
+const term = new xterm.Terminal();
+// const line = ref('')
+
 onMounted(() => {
   console.log('mounting terminal')
-  const term = new xterm.Terminal();
+  // eslint-disable-next-line
+  // @ts-ignore
+  window.electron.send('start-shell', '');
+
+  // eslint-disable-next-line
+  // @ts-ignore
+  window.electron.receive('stdout', (data) => {
+    term.write(data)
+    console.log('Received from main:', data);
+  });
+
   const element = document.getElementById('terminal')
   if (element) {
     term.open(element);
-    term.write('$')
+    term.onBinary((key) => {
+      console.log('binary ', key)
+    })
+    // eslint-disable-next-line
+    // @ts-ignore
+    term.onData((data) => {
+      console.log('data ', data)
+      // eslint-disable-next-line
+      // @ts-ignore
+      window.electron.send('message-from-renderer', data);
+    });
   }
 
 })
@@ -26,5 +49,5 @@ onMounted(() => {
 </script>
 
 <style src='/node_modules/xterm/css/xterm.css'>
-    /* global styles */
+/* global styles */
 </style>

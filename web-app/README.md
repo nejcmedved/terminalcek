@@ -1,12 +1,12 @@
-# Terminalcek (terminalcek-app)
+# Terminalcek (terminalcek)
 
-Web Terminal
+Terminalcek web app
 
-## Run in electron mode
+## Rebuilding node-pty
 
-```bash
-yarn quasar dev -m electron
-```
+https://www.npmjs.com/package/@electron/rebuild
+
+https://github.com/electron/rebuild/issues/75#issuecomment-504637837
 
 ## Install the dependencies
 ```bash

@@ -1,11 +1,13 @@
-import { app, BrowserWindow } from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import path from 'path';
 import os from 'os';
+import * as pty from 'node-pty';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
 let mainWindow: BrowserWindow | undefined;
+let shellProcess = undefined as undefined | pty.IPty;
 
 function createWindow() {
   /**
@@ -52,4 +54,40 @@ app.on('activate', () => {
   if (mainWindow === undefined) {
     createWindow();
   }
+});
+
+ipcMain.on('start-shell', () => {
+  console.log('starting shell process')
+  const shell = os.platform() === 'win32' ? 'cmd.exe' : 'bash';
+  shellProcess = pty.spawn(shell, [], {
+    name: 'xterm-color',
+    cols: 80,
+    rows: 30,
+  });
+  shellProcess.onData(recv => mainWindow?.webContents.send('stdout', recv));
+  /*
+  if(!shellProcess.stdout || !shellProcess.stderr)
+    return
+  // Handle the data event for standard output
+  shellProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+    mainWindow?.webContents.send('stdout', data.toString());
+  });
+
+// Handle the data event for standard error
+  shellProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+    mainWindow?.webContents.send('stdout', data.toString());
+  });*/
+});
+
+// Handle an IPC event from renderer
+ipcMain.on('message-from-renderer', (event, args) => {
+  console.log('Received from renderer:', args);
+  if(!shellProcess) {
+    console.warn('shell process is undefined')
+    return
+  }
+  shellProcess.write(`${args}`);
+
 });
