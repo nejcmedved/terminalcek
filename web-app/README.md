@@ -8,6 +8,12 @@ https://www.npmjs.com/package/@electron/rebuild
 
 https://github.com/electron/rebuild/issues/75#issuecomment-504637837
 
+## Running electron dev mode
+
+```bash
+quasar dev -m electron
+```
+
 ## Install the dependencies
 ```bash
 yarn

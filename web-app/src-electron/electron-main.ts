@@ -2,6 +2,8 @@ import {app, BrowserWindow, ipcMain, Tray, Menu} from 'electron';
 import path from 'path';
 import os from 'os';
 import * as pty from 'node-pty';
+import { shell } from 'electron/common';
+import { getMockMenu } from './mock_data';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -9,6 +11,21 @@ const platform = process.platform || os.platform();
 let mainWindow: BrowserWindow | undefined;
 let shellProcess = undefined as undefined | pty.IPty;
 let tray = null;
+
+export enum TerminalcekType {
+  SSH,
+  WEBSITE,
+  SERIAL
+}
+
+export interface CustomMenuItem extends Electron.MenuItem {
+  href?: string | undefined; // Add any custom properties you need
+}
+
+export interface CustomMenuItemContstructorOptions extends Electron.MenuItemConstructorOptions {
+  href?: string | undefined; // Add any custom properties you need
+  terminal_type: TerminalcekType
+}
 
 function createWindow() {
   /**
@@ -43,19 +60,24 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+function onClick(menuItem: CustomMenuItem, browserWindow: BrowserWindow | undefined, event?: Electron.KeyboardEvent) {
+  console.log(`Menu item click MenuItem: ${menuItem.label}, BrowserWindow: ${browserWindow ? browserWindow.id : 'undefined'}, Event: ${event}`);
+  if(menuItem.href) {
+    console.log('opening browser ', menuItem.href)
+    shell.openExternal(menuItem.href)
+  }
+}
 
+app.whenReady().then(() => {
+  createWindow()
   tray = new Tray(path.resolve(__dirname, 'icons/icon.png'))
-  const contextMenu = Menu.buildFromTemplate([
-    {label: 'Item1', type: 'radio'},
-    {label: 'Item2', type: 'radio'},
-    {label: 'Item3', type: 'radio', checked: true},
-    {label: 'Item4', type: 'radio'}
-  ])
+  const contextMenu = Menu.buildFromTemplate(
+    getMockMenu(onClick)
+  )
   tray.setToolTip('This is my application.')
   tray.setContextMenu(contextMenu)
   tray.addListener('double-click', () => {
-    createWindow()
+    return
   });
 });
 
