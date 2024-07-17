@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import * as pty from 'node-pty';
 import { shell } from 'electron/common';
-import { getMockMenu } from './mock_data';
+import {getMockMenu, getMockWorkSpaces} from './mock_data';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -102,6 +102,14 @@ ipcMain.on('start-shell', () => {
     rows: 30,
   });
   shellProcess.onData(recv => mainWindow?.webContents.send('stdout', recv));
+});
+
+ipcMain.on('load-main-data-req', () => {
+  console.log('loading main app data')
+  const data = {
+    workspaces: getMockWorkSpaces()
+  }
+  mainWindow?.webContents.send('load-main-data-resp', data)
 });
 
 // Handle an IPC event from renderer
