@@ -16,6 +16,6 @@ export const useMainStore = defineStore('main', {
       window.electron.receive('load-main-data-resp', (data) => {
         this.$state = data
       });
-    }
+    },
   },
 });

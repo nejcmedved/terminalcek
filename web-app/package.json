@@ -5,20 +5,25 @@
   "productName": "Terminalcek",
   "author": "Nejc Medved <medo.nejc@gmail.com>",
   "private": true,
+  "main": "./dist/main.js",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
-    "idb": "^8.0.0",
+    "electron-squirrel-startup": "^1.0.1",
     "node-pty": "^1.0.0",
     "pinia": "^2.0.11",
     "quasar": "^2.16.0",
+    "sqlite3": "^5.1.7",
     "vue": "^3.4.18",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.0.12",
@@ -26,6 +31,15 @@
     "xterm-addon-fit": "^0.8.0"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "@electron/packager": "^18.3.3",
     "@electron/rebuild": "^3.6.0",
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@quasar/app-vite": "^1.9.0",

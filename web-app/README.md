@@ -14,6 +14,12 @@ https://github.com/electron/rebuild/issues/75#issuecomment-504637837
 quasar dev -m electron
 ```
 
+## Packing the app
+
+```angular2html
+https://www.electronjs.org/docs/latest/tutorial/tutorial-packaging
+```
+
 ## Install the dependencies
 ```bash
 yarn

@@ -4,6 +4,7 @@ import os from 'os';
 import * as pty from 'node-pty';
 import { shell } from 'electron/common';
 import {getMockMenu, getMockWorkSpaces} from './mock_data';
+import {TerminalcekDb} from 'app/src-electron/db';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -11,6 +12,7 @@ const platform = process.platform || os.platform();
 let mainWindow: BrowserWindow | undefined;
 let shellProcess = undefined as undefined | pty.IPty;
 let tray = null;
+const db = new TerminalcekDb()
 
 export enum TerminalcekType {
   SSH,
@@ -57,6 +59,7 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = undefined;
+    db.closedb()
   });
 }
 
@@ -121,4 +124,9 @@ ipcMain.on('message-from-renderer', (event, args) => {
   }
   shellProcess.write(`${args}`);
 
+});
+
+// Handle an IPC event from renderer
+ipcMain.on('workspace', (event, args) => {
+  console.log('Received from workspace :', args);
 });
