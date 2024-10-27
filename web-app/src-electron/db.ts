@@ -15,8 +15,6 @@ export class TerminalcekDb {
   }
 
   initdb() {
-    if(!this.db)
-      return
 
     this.db = new sqlite3.Database(DB_NAME, (err) => {
       if (err) {
@@ -38,7 +36,7 @@ export class TerminalcekDb {
       this.db.run(
         `CREATE TABLE IF NOT EXISTS workspace (
          id INTEGER PRIMARY KEY AUTOINCREMENT,
-         name TEXT NOT NULL
+         name TEXT NOT NULL UNIQUE
         )`,
         (err) => {
           if (err) {
@@ -50,6 +48,51 @@ export class TerminalcekDb {
       );
     });
   }
+
+  prepareSelectStatement(table: string) {
+    const ret = `SELECT * from ${table}`
+    return ret
+  }
+
+  doSelect(table: string) {
+    const statement = this.prepareSelectStatement(table)
+    if(!this.db)
+      return []
+    const db = this.db
+    return new Promise((resolve, reject) => {
+      db.all(statement, [], (err, rows) => {
+        if (err) {
+          reject()
+        }
+        // Log the rows
+        console.log('Rows:', rows);
+        return resolve(rows)
+      });
+    })
+  }
+
+  prepareInsertStatement(table: string, values: object) {
+    const ret = `INSERT INTO ${table} (${Object.keys(values).join(',')}) VALUES (${Object.values(values).map(elem => `"${elem}"`).join(',')})`
+    console.log('insert statement ', ret)
+    return ret
+  }
+
+  doInsert(table: string, values: object) {
+    const statement = this.prepareInsertStatement(table, values)
+    if(!this.db)
+      return
+    this.db.run(
+        statement,
+        (err) => {
+          if (err) {
+            console.error(`error executing ${statement}`, err.message);
+          } else {
+            console.log(`statement ${statement} executed`);
+          }
+        }
+      );
+  }
+
 
   closedb() {
     if (!this.db)

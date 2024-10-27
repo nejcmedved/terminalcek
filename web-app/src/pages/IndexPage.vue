@@ -3,8 +3,9 @@
     <div class="col-3">
       <div class="flex items-center justify-between">
         <div class="q-pa-sm" style="min-width: 70%">
-          <q-select square v-model="selectedWorkspace" :options="mainStore.workspaces" label="Workspace"/>
+          <q-select square v-model="selectedWorkspace" :options="workspaces.workspaces" label="Workspace" option-label="name"/>
         </div>
+
         <div class="q-pa-xs">
           <q-btn push color="primary" icon="add">
             <q-popup-proxy>
@@ -50,7 +51,7 @@ onMounted(() => {
 })
 
 function addWorkspace() {
-  return
+  workspaces.addWorkSpace(newWorkspaceName.value)
 }
 
 </script>

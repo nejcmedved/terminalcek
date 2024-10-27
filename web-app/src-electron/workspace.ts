@@ -5,7 +5,7 @@ export interface WorkspaceNode {
 }
 
 export interface Workspace {
-  label: string
+  name: string
   id: string // uuid,
   children: Array<WorkspaceNode>
 }

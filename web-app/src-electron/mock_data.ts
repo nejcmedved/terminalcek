@@ -7,11 +7,11 @@ import {Workspace} from 'app/src-electron/workspace';
 export function getMockWorkSpaces() {
   const workspaces = [
     {
-      label: 'Home',
+      name: 'Home',
       id: '1'
     },
     {
-      label: 'Work',
+      name: 'Work',
       id: '1'
     }
   ] as Array<Workspace>

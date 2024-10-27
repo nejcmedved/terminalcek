@@ -3,6 +3,7 @@ import {Workspace} from 'app/src-electron/workspace';
 
 export const useWorkspaceStore = defineStore('workspace', {
   state: () => ({
+    table: 'workspace',
     workspaces: [] as Array<Workspace>,
   }),
   getters: {},
@@ -11,11 +12,13 @@ export const useWorkspaceStore = defineStore('workspace', {
       // eslint-disable-next-line
       // @ts-ignore
       window.electron.send('workspace', JSON.stringify({
-        cmd: 'ADD_WORKSPACE',
-        data: {
+        cmd: 'DB_ADD',
+        table: this.table,
+        values: {
           name: workspace_name
         }
       }));
+      this.loadWorkspaces()
     },
     loadWorkspaces() {
       // eslint-disable-next-line
@@ -23,6 +26,12 @@ export const useWorkspaceStore = defineStore('workspace', {
       window.electron.send('workspace', JSON.stringify({
         cmd: 'LOAD_WORKSPACES'
       }));
+      // eslint-disable-next-line
+      // @ts-ignore
+      window.electron.receive('workspace', (data) => {
+        console.log('recv ', data)
+        this.workspaces = data
+      });
     },
   },
 });

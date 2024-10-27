@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import * as pty from 'node-pty';
 import { shell } from 'electron/common';
-import {getMockMenu, getMockWorkSpaces} from './mock_data';
+import {getMockMenu} from './mock_data';
 import {TerminalcekDb} from 'app/src-electron/db';
 
 // needed in case process is undefined under Linux
@@ -35,8 +35,8 @@ function createWindow() {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: 1400,
+    height: 800,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -110,8 +110,9 @@ ipcMain.on('start-shell', () => {
 ipcMain.on('load-main-data-req', () => {
   console.log('loading main app data')
   const data = {
-    workspaces: getMockWorkSpaces()
+    workspaces: db.doSelect('workspace')
   }
+  console.log('data ', data)
   mainWindow?.webContents.send('load-main-data-resp', data)
 });
 
@@ -127,6 +128,14 @@ ipcMain.on('message-from-renderer', (event, args) => {
 });
 
 // Handle an IPC event from renderer
-ipcMain.on('workspace', (event, args) => {
+ipcMain.on('workspace', async (event, args) => {
   console.log('Received from workspace :', args);
+  const cmd_obj = JSON.parse(args)
+  if (cmd_obj.cmd === 'DB_ADD') {
+    db.doInsert(cmd_obj.table, cmd_obj.values)
+  } else if (cmd_obj.cmd === 'LOAD_WORKSPACES') {
+    console.log('workspaces ', db.doSelect('workspace'))
+    const rows = await db.doSelect('workspace')
+    mainWindow?.webContents.send('workspace', rows)
+  }
 });
